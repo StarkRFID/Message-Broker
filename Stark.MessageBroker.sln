@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.28803.452
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Stark.MessageBroker", "Stark.MessageBroker\Stark.MessageBroker.csproj", "{316803DF-6964-42A8-9866-5E4769E65A15}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Stark.MessageBroker.Tests", "Stark.MessageBroker.Tests\Stark.MessageBroker.Tests.csproj", "{65EA13A3-A6A9-4970-B305-1A18E106B477}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{316803DF-6964-42A8-9866-5E4769E65A15}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{316803DF-6964-42A8-9866-5E4769E65A15}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{316803DF-6964-42A8-9866-5E4769E65A15}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{316803DF-6964-42A8-9866-5E4769E65A15}.Release|Any CPU.Build.0 = Release|Any CPU
+		{65EA13A3-A6A9-4970-B305-1A18E106B477}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{65EA13A3-A6A9-4970-B305-1A18E106B477}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{65EA13A3-A6A9-4970-B305-1A18E106B477}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{65EA13A3-A6A9-4970-B305-1A18E106B477}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {36C86FB6-1027-47FA-B0A1-390184EE7F03}
+	EndGlobalSection
+EndGlobal
