@@ -17,7 +17,7 @@ namespace Stark.MessageBroker.Tests
 {
     [TestFixture]
     [Category("Service")]
-    public class MessageBrokerTests : TestBase
+    public class MessageBrokerTests
     {
         private LogServiceMock LogService { get; set; }
 
