@@ -2,7 +2,15 @@
 
   <PropertyGroup>
     <TargetFramework>netcoreapp2.1</TargetFramework>
-
+    <PackageId>Stark.MessageBroker.Tests</PackageId>
+    <PackageVersion>1.0.0</PackageVersion>
+    <Authors>Stark EM, LLC</Authors>
+    <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
+    <Copyright>Copyright © Stark EM, LLC 2019. All rights reserved.</Copyright>
+    <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
+    <Version>1.0.0</Version>
+    <AssemblyVersion>1.0.0.0</AssemblyVersion>
+    <FileVersion>1.0.0.0</FileVersion>
     <IsPackable>false</IsPackable>
   </PropertyGroup>
 
