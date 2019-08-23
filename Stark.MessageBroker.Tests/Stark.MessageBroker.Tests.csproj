@@ -2,6 +2,7 @@
 
   <PropertyGroup>
     <TargetFramework>netcoreapp2.1</TargetFramework>
+    <RuntimeFrameworkVersion>2.1.0</RuntimeFrameworkVersion>
     <TargetLatestRuntimePatch>true</TargetLatestRuntimePatch>
     <PackageId>Stark.MessageBroker.Tests</PackageId>
     <PackageVersion>1.0.0</PackageVersion>
@@ -22,6 +23,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Update="Microsoft.NETCore.App" Version="2.1.0" />
     <ProjectReference Include="..\Stark.MessageBroker\Stark.MessageBroker.csproj" />
   </ItemGroup>
 
