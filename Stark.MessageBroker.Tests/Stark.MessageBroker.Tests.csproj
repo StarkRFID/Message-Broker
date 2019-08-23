@@ -23,7 +23,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Update="Microsoft.NETCore.App" Version="2.1.0" />
+    <PackageReference Update="Microsoft.NETCore.App" Version="2.1" />
     <ProjectReference Include="..\Stark.MessageBroker\Stark.MessageBroker.csproj" />
   </ItemGroup>
 
