@@ -21,13 +21,10 @@ public class GenericMessage : Message
 // Subscribe to messages and perform action when received
 broker.Subscribe<GenericMessage>(() =>
                                  {
-                                     LogService.Log(LogLevel.Info,
-                                                    "Action {name} Executed for test: {0}.",
-                                                    name,
-                                                    nameof(SubscribeNoDataTest));
+                                     // do interesting things...
                                      return Task.CompletedTask;
                                  },
-                                 name);
+                                 "subscription name");
 
 // Post message
 await broker.PostAsync<GenericMessage>();
@@ -44,10 +41,10 @@ public class FooMessage : Message<Foo>
 // Subscribe to messages and perform action when received
 broker.Subscribe<FooMessage>(fooMsg =>
                             {
-                                executedActions.Add($"{nameof(FooMessage)} Executed with data `{fooMsg.Data.Data}`");
-                                return Task.CompletedTask;
+                                var data = fooMsg.Data.Data;
+                                // do interesting things with data...
                             },
-                            "Action 1");
+                            "subscription name");
 
 // Post message
 await broker.PostAsync(new FooMessage());
