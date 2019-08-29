@@ -1,7 +1,6 @@
 # Message-Broker
 
-A simple, asynchronous, in-memory message broker. The goal was to create a simple way for two components to communicate
-with each other without knowing about each other.
+A simple, asynchronous, in-memory message broker that provides publish/subscribe functionality between loosely coupled components.
 
 The library makes use of LibLog to provide logging abstraction. For more information, see: <https://github.com/damianh/LibLog.>
 
