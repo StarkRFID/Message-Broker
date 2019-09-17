@@ -6,6 +6,7 @@
     <PackageId>Stark.MessageBroker</PackageId>
     <PackageVersion>1.0.0</PackageVersion>
     <Authors>Stark EM, LLC</Authors>
+    <PackageTags>message-broker</PackageTags>
     <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <Copyright>Copyright © Stark EM, LLC 2019. All rights reserved.</Copyright>
