@@ -1,12 +1,16 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
+    <Description>Asynchronous, in-memory message broker that provides publish/subscribe functionality</Description>
     <TargetFramework>netstandard2.0</TargetFramework>
     <PackageId>Stark.MessageBroker</PackageId>
     <PackageVersion>1.0.0</PackageVersion>
     <Authors>Stark EM, LLC</Authors>
     <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <Copyright>Copyright © Stark EM, LLC 2019. All rights reserved.</Copyright>
+    <RepositoryUrl>https://github.com/StarkRFID/Message-Broker</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <Version>1.0.0</Version>
     <AssemblyVersion>1.0.0.0</AssemblyVersion>
