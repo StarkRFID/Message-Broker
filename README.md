@@ -4,6 +4,10 @@ A simple, asynchronous, in-memory message broker that provides publish/subscribe
 
 The library makes use of LibLog to provide logging abstraction. For more information, see: <https://github.com/damianh/LibLog.>
 
+## NuGet
+
+Package can be download from: [Stark Message-Broker](https://www.nuget.org/packages/Stark.MessageBroker/).
+
 ## Usage
 
 Messages are posted and subscribed to by type, with the ability to execute custom actions for each message type.
