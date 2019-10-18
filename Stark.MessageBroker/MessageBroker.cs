@@ -4,11 +4,11 @@
 // ------------------------------------------------------------------------------
 
 using System;
-using System.Collections.Async;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Dasync.Collections;
 using Stark.MessageBroker.Logging;
 
 
@@ -170,7 +170,7 @@ namespace Stark.MessageBroker
                                                         {
                                                             if (action.Func is Func<Task> f) await f();
                                                         },
-                                                        maxDegreeOfParalellism: 100);
+                                                        maxDegreeOfParallelism: 100);
             } else {
                 if (Actions.TryGetValue(messageType, out actionValues)) {
                     // todo: Would like to lock to protect against changes to the collection...
@@ -179,7 +179,7 @@ namespace Stark.MessageBroker
                                                                 if (action.Func is Func<Task> f) await f();
 
                                                             },
-                                                            maxDegreeOfParalellism: 100);
+                                                            maxDegreeOfParallelism: 100);
                 } else {
                     throw new MessageBrokerException($"Failed to get Actions for {messageType}! Actions not processed.");
                 }
@@ -219,7 +219,7 @@ namespace Stark.MessageBroker
                                                             if (action.Func is Func<Task> f) await f();
                                                             if (action.Func is Func<T, Task> fd) await fd(message);
                                                         },
-                                                        maxDegreeOfParalellism: 100);
+                                                        maxDegreeOfParallelism: 100);
             } else {
                 if (Actions.TryGetValue(messageType, out actionValues)) {
                     // todo: Would like to lock to protect against changes to the collection...
@@ -228,7 +228,7 @@ namespace Stark.MessageBroker
                                                                 if (action.Func is Func<Task> f) await f();
                                                                 if (action.Func is Func<T, Task> fd) await fd(message);
                                                             },
-                                                            maxDegreeOfParalellism: 100);
+                                                            maxDegreeOfParallelism: 100);
                 } else {
                     throw new MessageBrokerException($"Failed to get Actions for {messageType}! Actions not processed.");
                 }
