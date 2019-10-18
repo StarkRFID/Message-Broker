@@ -4,11 +4,11 @@
 // ------------------------------------------------------------------------------
 
 using System;
-using System.Collections.Async;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Dasync.Collections;
 using NUnit.Framework;
 using Stark.MessageBroker.Tests.Messages;
 using Stark.MessageBroker.Tests.Mocks;
@@ -358,7 +358,7 @@ namespace Stark.MessageBroker.Tests
             for (var idx = 1; idx <= iteration; idx++) posts.Add(idx);
 
             await posts.ParallelForEachAsync(async post => await broker.PostAsync(new FooMessage()),
-                                             maxDegreeOfParalellism: 100);
+                                             maxDegreeOfParallelism: 100);
 
             Assert.That(result.Count, Is.EqualTo(2*iteration));
             Assert.That(result.Count(p => p.Contains("Action Executed")), Is.EqualTo(iteration));
