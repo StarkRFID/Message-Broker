@@ -3,7 +3,7 @@
 // Unauthorized copying of this file, via any medium, is strictly prohibited.
 // ------------------------------------------------------------------------------
 
-namespace Stark.MessageBroker
+namespace Stark.Messaging
 {
     /// <inheritdoc />
     /// <summary>

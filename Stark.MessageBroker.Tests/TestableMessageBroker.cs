@@ -6,7 +6,7 @@
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Stark.MessageBroker.Tests
+namespace Stark.Messaging.Tests
 {
     /// <summary>
     /// This wrapper should only be used in unit tests to provide access

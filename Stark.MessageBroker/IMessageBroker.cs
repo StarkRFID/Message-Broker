@@ -6,7 +6,7 @@
 using System;
 using System.Threading.Tasks;
 
-namespace Stark.MessageBroker
+namespace Stark.Messaging
 {
     public interface IMessageBroker
     {

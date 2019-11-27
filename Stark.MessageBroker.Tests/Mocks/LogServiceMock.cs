@@ -5,7 +5,7 @@
 
 using System;
 
-namespace Stark.MessageBroker.Tests.Mocks
+namespace Stark.Messaging.Tests.Mocks
 {
     internal class LogServiceMock
     {

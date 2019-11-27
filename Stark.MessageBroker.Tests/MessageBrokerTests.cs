@@ -10,10 +10,10 @@ using System.Linq;
 using System.Threading.Tasks;
 using Dasync.Collections;
 using NUnit.Framework;
-using Stark.MessageBroker.Tests.Messages;
-using Stark.MessageBroker.Tests.Mocks;
+using Stark.Messaging.Tests.Messages;
+using Stark.Messaging.Tests.Mocks;
 
-namespace Stark.MessageBroker.Tests
+namespace Stark.Messaging.Tests
 {
     [TestFixture]
     [Category("Service")]
