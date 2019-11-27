@@ -6,7 +6,7 @@
 using System;
 using System.Runtime.Serialization;
 
-namespace Stark.MessageBroker
+namespace Stark.Messaging
 {
     [Serializable]
     public class MessageBrokerException : Exception

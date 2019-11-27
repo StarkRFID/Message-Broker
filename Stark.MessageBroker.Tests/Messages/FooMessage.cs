@@ -3,7 +3,7 @@
 // Unauthorized copying of this file, via any medium, is strictly prohibited.
 // ------------------------------------------------------------------------------
 
-namespace Stark.MessageBroker.Tests.Messages
+namespace Stark.Messaging.Tests.Messages
 {
     /// <summary>
     /// A message containing data handled by the Message Broker.

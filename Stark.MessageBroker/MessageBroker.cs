@@ -9,10 +9,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Dasync.Collections;
-using Stark.MessageBroker.Logging;
+using Stark.Messaging.Logging;
 
 
-namespace Stark.MessageBroker
+namespace Stark.Messaging
 {
     public class MessageBroker : IMessageBroker
     {

@@ -3,7 +3,7 @@
 // Unauthorized copying of this file, via any medium, is strictly prohibited.
 // ------------------------------------------------------------------------------
 
-namespace Stark.MessageBroker.Tests.Mocks
+namespace Stark.Messaging.Tests.Mocks
 {
     public enum LogLevel
     {
