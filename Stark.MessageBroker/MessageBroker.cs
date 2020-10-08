@@ -172,10 +172,6 @@ namespace Stark.Messaging
                 return;
             }
 
-            // I removed the second attempt to get the values since the collection
-            // is being locked before it's accessed. We probably don't even need a 
-            // concurrent dictionary, but there's no harm in using one. If you think 
-            // a second attempt should be made, let me know in the PR and I'll update.
             IList<(object Func, string Name)> subscriptions = null;
             await UseLockAsync(() =>
                                {
@@ -221,10 +217,6 @@ namespace Stark.Messaging
                 return;
             }
 
-            // I removed the second attempt to get the values since the collection
-            // is being locked before it's accessed. We probably don't even need a 
-            // concurrent dictionary, but there's no harm in using one. If you think 
-            // a second attempt should be made, let me know in the PR and I'll update.
             IList<(object Func, string Name)> subscriptions = null;
             await UseLockAsync(() =>
                                {
