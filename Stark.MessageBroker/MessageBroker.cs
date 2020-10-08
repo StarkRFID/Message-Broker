@@ -58,36 +58,6 @@ namespace Stark.Messaging
             UseLock(() => Actions.Clear());
         }
 
-        /// <summary>
-        /// Acquires the lock and then executes the supplied action.
-        /// </summary>
-        /// <param name="func"></param>
-        private void UseLock(Action func)
-        {
-            ActionsLock.Wait();
-            try {
-                func();
-            } finally {
-                ActionsLock.Release();
-            }
-        }
-
-        /// <summary>
-        /// Acquires the lock in an async contexts and executes the
-        /// supplied function.
-        /// </summary>
-        /// <param name="func"></param>
-        /// <returns></returns>
-        private async Task UseLockAsync(Func<Task> func)
-        {
-            await ActionsLock.WaitAsync();
-            try {
-                await func();
-            } finally {
-                ActionsLock.Release();
-            }
-        }
-
         /// <inheritdoc />
         /// <summary>
         /// Removes all actions for the specified message type.
@@ -212,12 +182,15 @@ namespace Stark.Messaging
                                    if (Actions.TryGetValue(messageType, out var actionValues)) {
                                        subscriptions = actionValues.Select(p => p).ToList();
                                    } else {
-                                       throw new MessageBrokerException($"Failed to get Actions for {messageType}! Actions not processed.");
+                                       LogService.ErrorFormat("{Class}|Actions no longer configured for {MessageType} messages.",
+                                                              nameof(MessageBroker),
+                                                              messageType);
                                    }
 
                                    return Task.CompletedTask;
                                });
 
+            if (null == subscriptions) return;
             await subscriptions.ParallelForEachAsync(async action =>
                                                      {
                                                          if (action.Func is Func<Task> f) await f();
@@ -258,18 +231,51 @@ namespace Stark.Messaging
                                    if (Actions.TryGetValue(messageType, out var actionValues)) {
                                        subscriptions = actionValues.Select(p => p).ToList();
                                    } else {
-                                       throw new MessageBrokerException($"Failed to get Actions for {messageType}! Actions not processed.");
+                                       LogService.ErrorFormat("{Class}|Actions no longer configured for {MessageType} messages.",
+                                                              nameof(MessageBroker),
+                                                              messageType);
                                    }
 
                                    return Task.CompletedTask;
                                });
 
+            if (null == subscriptions) return;
             await subscriptions.ParallelForEachAsync(async action =>
                                                      {
                                                          if (action.Func is Func<Task> f) await f();
                                                          if (action.Func is Func<T, Task> fd) await fd(message);
                                                      },
                                                      maxDegreeOfParallelism: 100);
+        }
+
+        /// <summary>
+        /// Acquires the lock and then executes the supplied action.
+        /// </summary>
+        /// <param name="func"></param>
+        private void UseLock(Action func)
+        {
+            ActionsLock.Wait();
+            try {
+                func();
+            } finally {
+                ActionsLock.Release();
+            }
+        }
+
+        /// <summary>
+        /// Acquires the lock in an async contexts and executes the
+        /// supplied function.
+        /// </summary>
+        /// <param name="func"></param>
+        /// <returns></returns>
+        private async Task UseLockAsync(Func<Task> func)
+        {
+            await ActionsLock.WaitAsync();
+            try {
+                await func();
+            } finally {
+                ActionsLock.Release();
+            }
         }
 
         /// <summary>
