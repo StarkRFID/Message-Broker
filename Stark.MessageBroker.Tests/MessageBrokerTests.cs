@@ -6,6 +6,7 @@
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 using Dasync.Collections;
@@ -363,6 +364,82 @@ namespace Stark.Messaging.Tests
             Assert.That(result.Count, Is.EqualTo(2*iteration));
             Assert.That(result.Count(p => p.Contains("Action Executed")), Is.EqualTo(iteration));
             Assert.That(result.Count(p => p.Contains("Action with Data Executed")), Is.EqualTo(iteration));
+        }
+
+        [Test]
+        public async Task PreventSubscriptionModificationsDuringExecution([Values]bool withData)
+        {
+            var executedActions = new List<string>();
+            var broker = GetFreshBroker();
+
+            var abort = false;
+
+            var t0 = Task.Run(async () =>
+                              {
+                                  Console.WriteLine($"Starting: {DateTime.Now:O}");
+                                  var timer = new Stopwatch();
+                                  timer.Start();
+                                  for (var i = 1; i <= 5000; i++) {
+                                      //Console.WriteLine($"Iteration {i}: {DateTime.Now:O}");
+                                      if (withData) {
+                                          broker.Subscribe<FooMessage>(rti =>
+                                                                       {
+                                                                           executedActions.Add($"{nameof(FooMessage)} Executed");
+                                                                           return Task.CompletedTask;
+                                                                       },
+                                                                       $"Action {i}");
+                                      } else {
+                                          broker.Subscribe<GenericMessage>(() =>
+                                                                           {
+                                                                               executedActions.Add($"{nameof(GenericMessage)} Executed");
+                                                                               return Task.CompletedTask;
+                                                                           },
+                                                                           $"Action {i}");
+                                      }
+
+                                      if (abort) break;
+                                      await Task.Delay(TimeSpan.FromMilliseconds(1));
+                                  }
+                                  timer.Stop();
+                                  Console.WriteLine($"Duration: {timer.ElapsedMilliseconds}: {DateTime.Now:O}");
+                              });
+
+            var t1 = Task.Run(async () =>
+                              {
+                                  await Task.Delay(TimeSpan.FromMilliseconds(100));
+                                  for (var i = 1; i <= 5000; i++) {
+                                      try {
+                                          if (withData) await broker.PostAsync(new FooMessage());
+                                          else await broker.PostAsync<GenericMessage>();
+                                      } catch (Exception) {
+                                          Console.WriteLine($"Failed on iteration {i}");
+                                          abort = true;
+                                          throw;
+                                      }
+
+                                      if (abort) break;
+                                      await Task.Delay(TimeSpan.FromMilliseconds(1));
+                                  }
+                              });
+            var t2 = Task.Run(async () =>
+                              {
+                                  await Task.Delay(TimeSpan.FromMilliseconds(150));
+                                  for (var i = 1; i <= 5000; i++) {
+                                      try {
+                                          if (withData) broker.Unsubscribe<FooMessage>();
+                                          else broker.Unsubscribe<GenericMessage>();
+                                      } catch (Exception) {
+                                          Console.WriteLine($"Failed on iteration {i}");
+                                          abort = true;
+                                          throw;
+                                      }
+
+                                      if (abort) break;
+                                      await Task.Delay(TimeSpan.FromMilliseconds(1));
+                                  }
+                              });
+
+            await Task.WhenAll(new[] { t0, t1, t2 });
         }
     }
 }
