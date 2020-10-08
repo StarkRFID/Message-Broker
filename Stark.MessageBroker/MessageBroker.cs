@@ -7,6 +7,7 @@ using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using Dasync.Collections;
 using Stark.Messaging.Logging;
@@ -23,6 +24,11 @@ namespace Stark.Messaging
 
         protected ConcurrentDictionary<string, IList<(object Func, string Name)>> Actions { get; } =
             new ConcurrentDictionary<string, IList<(object Func, string Name)>>();
+
+        /// <summary>
+        /// Used to synchronize access to the subscriptions for a message type.
+        /// </summary>
+        private SemaphoreSlim ActionsLock { get; } = new SemaphoreSlim(1, 1);
 
         /// <summary>
         /// Creates a new instance.
@@ -49,7 +55,37 @@ namespace Stark.Messaging
         /// </summary>
         public void UnsubscribeAll()
         {
-            Actions.Clear();
+            UseLock(() => Actions.Clear());
+        }
+
+        /// <summary>
+        /// Acquires the lock and then executes the supplied action.
+        /// </summary>
+        /// <param name="func"></param>
+        private void UseLock(Action func)
+        {
+            ActionsLock.Wait();
+            try {
+                func();
+            } finally {
+                ActionsLock.Release();
+            }
+        }
+
+        /// <summary>
+        /// Acquires the lock in an async contexts and executes the
+        /// supplied function.
+        /// </summary>
+        /// <param name="func"></param>
+        /// <returns></returns>
+        private async Task UseLockAsync(Func<Task> func)
+        {
+            await ActionsLock.WaitAsync();
+            try {
+                await func();
+            } finally {
+                ActionsLock.Release();
+            }
         }
 
         /// <inheritdoc />
@@ -61,9 +97,12 @@ namespace Stark.Messaging
         {
             // Find keys that match message type and attempt to remove. Throw on failure.
             var messageType = ResolveMessageType<T>();
-            if (Actions.Keys.Where(key => key == messageType).Any(key => !Actions.TryRemove(messageType, out _))) {
-                throw new MessageBrokerException($"Failed to unsubscribe all Actions for {messageType}!");
-            }
+            UseLock(() =>
+                    {
+                        if (Actions.Keys.Where(key => key == messageType).Any(key => !Actions.TryRemove(messageType, out _))) {
+                            throw new MessageBrokerException($"Failed to unsubscribe all Actions for {messageType}!");
+                        }
+                    });
         }
 
         /// <inheritdoc />
@@ -76,15 +115,16 @@ namespace Stark.Messaging
         {
             if (string.IsNullOrWhiteSpace(name)) throw new ArgumentNullException(nameof(name));
 
-            // bmg: This is weird, but needed when trying to update the value
-            //      for a concurrent dictionary. 
-            foreach (var messageType in Actions.Keys) {
-                // todo: Throw if it fails?
-                if (!Actions.TryGetValue(messageType, out var actions)) continue;
-                lock (actions) {
-                    Actions.TryUpdate(messageType, actions.Where(p => p.Name != name).ToList(), actions);
-                }
-            }
+            UseLock(() =>
+                    {
+                        // bmg: This is weird, but needed when trying to update the value
+                        //      for a concurrent dictionary. 
+                        foreach (var messageType in Actions.Keys) {
+                            // todo: Throw if it fails?
+                            if (!Actions.TryGetValue(messageType, out var actions)) continue;
+                            Actions.TryUpdate(messageType, actions.Where(p => p.Name != name).ToList(), actions);
+                        }
+                    });
         }
 
         /// <inheritdoc />
@@ -131,15 +171,16 @@ namespace Stark.Messaging
         {
             if (string.IsNullOrWhiteSpace(messageType)) throw new ArgumentNullException(nameof(messageType));
 
-            if (Actions.TryGetValue(messageType, out var actionValues)) {
-                lock (actionValues) {
-                    actionValues.Add(action);
-                }
-            } else {
-                if (!Actions.TryAdd(messageType, new List<(object, string)> {action})) {
-                    throw new MessageBrokerException($"Failed to add Action with Data (Name: {action.Name}) for {messageType} subscriptions.");
-                }
-            }
+            UseLock(() =>
+                    {
+                        if (Actions.TryGetValue(messageType, out var actionValues)) {
+                            actionValues.Add(action);
+                        } else {
+                            if (!Actions.TryAdd(messageType, new List<(object, string)> {action})) {
+                                throw new MessageBrokerException($"Failed to add Action with Data (Name: {action.Name}) for {messageType} subscriptions.");
+                            }
+                        }
+                    });
         }
 
         /// <inheritdoc />
@@ -161,29 +202,27 @@ namespace Stark.Messaging
                 return;
             }
 
-            // Execute Actions for the message type. The else{...} block exists as 
-            // a simple fallback in the event that the original request for the 
-            // Actions fails.
-            if (Actions.TryGetValue(messageType, out var actionValues)) {
-                // todo: Would like to lock to protect against changes to the collection...
-                await actionValues.ParallelForEachAsync(async action =>
-                                                        {
-                                                            if (action.Func is Func<Task> f) await f();
-                                                        },
-                                                        maxDegreeOfParallelism: 100);
-            } else {
-                if (Actions.TryGetValue(messageType, out actionValues)) {
-                    // todo: Would like to lock to protect against changes to the collection...
-                    await actionValues.ParallelForEachAsync(async action =>
-                                                            {
-                                                                if (action.Func is Func<Task> f) await f();
+            // I removed the second attempt to get the values since the collection
+            // is being locked before it's accessed. We probably don't even need a 
+            // concurrent dictionary, but there's no harm in using one. If you think 
+            // a second attempt should be made, let me know in the PR and I'll update.
+            IList<(object Func, string Name)> subscriptions = null;
+            await UseLockAsync(() =>
+                               {
+                                   if (Actions.TryGetValue(messageType, out var actionValues)) {
+                                       subscriptions = actionValues.Select(p => p).ToList();
+                                   } else {
+                                       throw new MessageBrokerException($"Failed to get Actions for {messageType}! Actions not processed.");
+                                   }
 
-                                                            },
-                                                            maxDegreeOfParallelism: 100);
-                } else {
-                    throw new MessageBrokerException($"Failed to get Actions for {messageType}! Actions not processed.");
-                }
-            }
+                                   return Task.CompletedTask;
+                               });
+
+            await subscriptions.ParallelForEachAsync(async action =>
+                                                     {
+                                                         if (action.Func is Func<Task> f) await f();
+                                                     },
+                                                     maxDegreeOfParallelism: 100);
         }
 
         /// <inheritdoc />
@@ -209,30 +248,28 @@ namespace Stark.Messaging
                 return;
             }
 
-            // Execute Actions for the message type. The else{...} block exists as 
-            // a simple fallback in the event that the original request for the 
-            // Actions fails.
-            if (Actions.TryGetValue(messageType, out var actionValues)) {
-                // todo: Would like to lock to protect against changes to the collection...
-                await actionValues.ParallelForEachAsync(async action =>
-                                                        {
-                                                            if (action.Func is Func<Task> f) await f();
-                                                            if (action.Func is Func<T, Task> fd) await fd(message);
-                                                        },
-                                                        maxDegreeOfParallelism: 100);
-            } else {
-                if (Actions.TryGetValue(messageType, out actionValues)) {
-                    // todo: Would like to lock to protect against changes to the collection...
-                    await actionValues.ParallelForEachAsync(async action =>
-                                                            {
-                                                                if (action.Func is Func<Task> f) await f();
-                                                                if (action.Func is Func<T, Task> fd) await fd(message);
-                                                            },
-                                                            maxDegreeOfParallelism: 100);
-                } else {
-                    throw new MessageBrokerException($"Failed to get Actions for {messageType}! Actions not processed.");
-                }
-            }
+            // I removed the second attempt to get the values since the collection
+            // is being locked before it's accessed. We probably don't even need a 
+            // concurrent dictionary, but there's no harm in using one. If you think 
+            // a second attempt should be made, let me know in the PR and I'll update.
+            IList<(object Func, string Name)> subscriptions = null;
+            await UseLockAsync(() =>
+                               {
+                                   if (Actions.TryGetValue(messageType, out var actionValues)) {
+                                       subscriptions = actionValues.Select(p => p).ToList();
+                                   } else {
+                                       throw new MessageBrokerException($"Failed to get Actions for {messageType}! Actions not processed.");
+                                   }
+
+                                   return Task.CompletedTask;
+                               });
+
+            await subscriptions.ParallelForEachAsync(async action =>
+                                                     {
+                                                         if (action.Func is Func<Task> f) await f();
+                                                         if (action.Func is Func<T, Task> fd) await fd(message);
+                                                     },
+                                                     maxDegreeOfParallelism: 100);
         }
 
         /// <summary>
