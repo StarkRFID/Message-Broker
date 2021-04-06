@@ -26,7 +26,7 @@ variables:
   versionScript: azure/content-replacer-assembly-version.ps1 
   versionFiles: "Stark.MessageBroker/Stark.MessageBroker.csproj"
 
-name: $(TeamProject)_QA_v$(starkVer).$(Build.BuildId)
+name: $(TeamProject)_Production_v$(starkVer).$(Build.BuildId)
 
 stages:
 - stage: Build
