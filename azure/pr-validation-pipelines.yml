@@ -33,7 +33,6 @@ steps:
 - script: echo $(Build.BuildNumber)
 
 - checkout: self
-  submodules: true
 
 - task: NuGetToolInstaller@1
 
