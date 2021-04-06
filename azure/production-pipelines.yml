@@ -86,14 +86,14 @@ stages:
     
     - task: CopyFiles@2
       inputs:
-        SourceFolder: '$(Build.SourcesDirectory)'
+        SourceFolder: '$(Build.SourcesDirectory)/Stark.MessageBroker/bin/Debug/netstandard2.0/publish'
         Contents: '**'
         TargetFolder: '$(Build.ArtifactStagingDirectory)'
 
     - task: PublishBuildArtifacts@1
       inputs:
         PathtoPublish: '$(Build.ArtifactStagingDirectory)'
-        ArtifactName: '$(TeamProject)_Production_v$(starkVer).$(Build.BuildId)'
+        ArtifactName: 'Stark.MessageBroker_Production_v$(starkVer).$(Build.BuildId)'
         publishLocation: 'Container'
 
   - job: Tag_Source
