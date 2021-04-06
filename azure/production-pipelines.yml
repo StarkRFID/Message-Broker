@@ -112,8 +112,3 @@ stages:
           Write-Host "Successfully pushed tag to repo"
 
         failOnStderr: false
-
-- stage: Deploy
-  displayName: Deploy to Staging
-  dependsOn: 
-  - Build
