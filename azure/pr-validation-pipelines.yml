@@ -1,0 +1,68 @@
+# ASP.NET
+# Build and test ASP.NET projects.
+# Add steps that publish symbols, save build artifacts, deploy, and more:
+# https://docs.microsoft.com/azure/devops/pipelines/apps/aspnet/build-aspnet-4
+
+# Only run this pipeline on pull requests
+trigger: none
+
+pr:
+  branches:
+    include:
+    - master
+    - main
+    - DEV
+    - FEAT#*
+  paths:
+    exclude:
+    - README.md
+    - .gitignore
+
+pool:
+  vmImage: 'windows-latest'
+
+variables:
+  solution: '**/Stark.MessageBroker.sln'
+  messageBrokerProject: 'Stark.MessageBroker/Stark.MessageBroker.csproj'
+  buildPlatform: 'Any CPU'
+  buildConfiguration: 'Release'
+
+name: $(TeamProject)_$(SourceBranchName)_$(Date:yyyyMMdd)$(Rev:.r)
+
+steps:
+- script: echo $(Build.BuildNumber)
+
+- checkout: self
+  submodules: true
+
+- task: NuGetToolInstaller@1
+
+- task: DotNetCoreCLI@2
+  displayName: dotnet restore
+  inputs:
+    command: restore
+    projects: '$(messageBrokerProject)'
+    feedsToUse: config
+    nugetConfigPath: 'nuget.config'
+    includeNuGetOrg: true
+
+- task: DotNetCoreCLI@2
+  displayName: dotnet clean
+  inputs:
+    command: 'custom'
+    projects: '$(messageBrokerProject)'
+    custom: 'clean'
+
+- task: DotNetCoreCLI@2
+  displayName: dotnet publish
+  inputs:
+    command: 'publish'
+    publishWebProjects: false
+    projects: '$(messageBrokerProject)'
+    zipAfterPublish: false
+
+- task: DotNetCoreCLI@2
+  displayName: dotnet test
+  inputs:
+    command: 'test'
+    projects: 'Stark.MessageBroker.Tests/*.csproj'
