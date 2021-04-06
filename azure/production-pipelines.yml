@@ -117,11 +117,3 @@ stages:
   displayName: Deploy to Staging
   dependsOn: 
   - Build
-
-  jobs:
-  - job: Deploy
-    displayName: Deploy to Staging Slot
-    pool:
-      vmImage: $(vmImageName)
-
-    steps:
