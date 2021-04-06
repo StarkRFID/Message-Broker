@@ -125,4 +125,3 @@ stages:
       vmImage: $(vmImageName)
 
     steps:
-    - none
