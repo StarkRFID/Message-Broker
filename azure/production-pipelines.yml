@@ -111,4 +111,10 @@ stages:
 
         failOnStderr: false
 
+    - task: PublishBuildArtifacts@1
+      inputs:
+        PathtoPublish: '$(Build.ArtifactStagingDirectory)'
+        ArtifactName: '$(TeamProject)_Production_v$(starkVer).$(Build.BuildId)'
+        publishLocation: 'Container'
+
 ## ADD BACK A DEPLOY STAGE/JOB FOR UPLOADING FILES TO GITHUB
