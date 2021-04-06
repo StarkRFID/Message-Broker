@@ -20,7 +20,8 @@ variables:
   tag: 'qa-v$(starkVer).$(Build.BuildId)'
   gitTag: 'EXO-API-QA-v$(starkVer).$(Build.BuildId)'
 
-  
+  messageBrokerProject: 'Stark.MessageBroker/Stark.MessageBroker.csproj'
+
   # Agent VM image name
   vmImageName: 'windows-latest'
 
