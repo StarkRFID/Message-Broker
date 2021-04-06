@@ -16,10 +16,7 @@ variables:
   # Current product version
   starkVer: 2.0.2
 
-  # Container registry service connection established during pipeline creation
-  tag: 'qa-v$(starkVer).$(Build.BuildId)'
-  gitTag: 'EXO-API-QA-v$(starkVer).$(Build.BuildId)'
-
+  gitTag: 'MSGBKR-v$(starkVer).$(Build.BuildId)'
   messageBrokerProject: 'Stark.MessageBroker/Stark.MessageBroker.csproj'
 
   # Agent VM image name
@@ -113,3 +110,5 @@ stages:
           Write-Host "Successfully pushed tag to repo"
 
         failOnStderr: false
+
+## ADD BACK A DEPLOY STAGE/JOB FOR UPLOADING FILES TO GITHUB
