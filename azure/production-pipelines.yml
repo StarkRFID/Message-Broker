@@ -87,7 +87,7 @@ stages:
     
     - task: CopyFiles@2
       inputs:
-        SourceFolder: '$(Build.SourcesDirectory)/Stark.MessageBroker/bin/'
+        SourceFolder: '$(Build.SourcesDirectory)/Stark.MessageBroker/bin/Release'
         Contents: '**'
         TargetFolder: '$(Build.ArtifactStagingDirectory)'
 
