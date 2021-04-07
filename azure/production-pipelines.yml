@@ -97,8 +97,8 @@ stages:
         ArtifactName: 'Stark.MessageBroker_Production_v$(starkVer).$(Build.BuildId)'
         publishLocation: 'Container'
 
-  - job: Tag_Source
-    displayName: Tag Source
+  - job: Deploy
+    displayName: Deploy to NuGet
     pool:
       vmImage: $(vmImageName)
 
@@ -106,10 +106,26 @@ stages:
     - Build
 
     steps:
+    - task: NuGetCommand@2
+      inputs:
+        command: 'push'
+        packagesToPush: '$(Build.ArtifactStagingDirectory)/*.nupkg'
+        nuGetFeedType: 'external'
+        publishFeedCredentials: 'Stark NuGet Connection'
+
+
+  - job: Tag_Source
+    displayName: Tag Source
+    pool:
+      vmImage: $(vmImageName)
+
+    dependsOn: 
+    - Deploy
+
+    steps:
     - checkout: self
       persistCredentials: true
       clean: true
-      submodules: true
 
     - task: PowerShell@2
       inputs:
@@ -123,19 +139,3 @@ stages:
           Write-Host "Successfully pushed tag to repo"
 
         failOnStderr: false
-
-  - job: Deploy
-    displayName: Deploy to NuGet
-    pool:
-      vmImage: $(vmImageName)
-
-    dependsOn: 
-    - Tag_Source
-
-    steps:
-    - task: NuGetCommand@2
-      inputs:
-        command: 'push'
-        packagesToPush: '$(Build.ArtifactStagingDirectory)/*.nupkg'
-        nuGetFeedType: 'external'
-        publishFeedCredentials: 'Stark NuGet Connection'
