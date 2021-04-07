@@ -76,7 +76,7 @@ stages:
         command: 'publish'
         publishWebProjects: false
         projects: '$(messageBrokerProject)'
-        arguments: '-C Release'
+        arguments: '--configuration Release'
         zipAfterPublish: false
 
     - task: DotNetCoreCLI@2
