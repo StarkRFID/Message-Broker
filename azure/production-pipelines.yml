@@ -3,7 +3,7 @@
 # https://docs.microsoft.com/azure/devops/pipelines/languages/docker
 
 trigger:
-- none ## CHANGE THIS BACK TO 'DEV'
+- DEV
 
 # Disable PR triggers. This pipeline should only execute after merging a PR
 # into the DEV branch.
