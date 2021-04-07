@@ -133,11 +133,6 @@ stages:
     - Tag_Source
 
     steps:
-    - checkout: self
-      persistCredentials: true
-      clean: true
-      submodules: true
-
     - task: NuGetCommand@2
       inputs:
         command: 'push'
