@@ -97,22 +97,12 @@ stages:
         ArtifactName: 'Stark.MessageBroker_Production_v$(starkVer).$(Build.BuildId)'
         publishLocation: 'Container'
 
-  - job: Deploy
-    displayName: Deploy to NuGet
-    pool:
-      vmImage: $(vmImageName)
-
-    dependsOn: 
-    - Build
-
-    steps:
     - task: NuGetCommand@2
       inputs:
         command: 'push'
         packagesToPush: '$(Build.ArtifactStagingDirectory)/*.nupkg'
         nuGetFeedType: 'external'
         publishFeedCredentials: 'Stark NuGet Connection'
-
 
   - job: Tag_Source
     displayName: Tag Source
