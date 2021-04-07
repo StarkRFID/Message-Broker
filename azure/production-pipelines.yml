@@ -124,4 +124,20 @@ stages:
 
         failOnStderr: false
 
-## ADD BACK A DEPLOY STAGE/JOB FOR UPLOADING FILES TO GITHUB
+- stage: Deploy
+  displayName: Deploy to NuGet
+  dependsOn: 
+  - Build
+
+  jobs:
+  - job: Deploy
+    displayName: Deploy to NuGet
+
+    steps:
+    - task: NuGetCommand@2
+      inputs:
+        command: 'push'
+        packagesToPush: '$(Build.ArtifactStagingDirectory)/**/*.nupkg;!$(Build.ArtifactStagingDirectory)/**/*.symbols.nupkg'
+        nuGetFeedType: 'external'
+        publishFeedCredentials: 'Stark NuGet Connection'
+
