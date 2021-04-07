@@ -76,6 +76,7 @@ stages:
         command: 'publish'
         publishWebProjects: false
         projects: '$(messageBrokerProject)'
+        arguments: '-C Release'
         zipAfterPublish: false
 
     - task: DotNetCoreCLI@2
@@ -86,7 +87,7 @@ stages:
     
     - task: CopyFiles@2
       inputs:
-        SourceFolder: '$(Build.SourcesDirectory)/Stark.MessageBroker/bin/Debug/netstandard2.0/publish'
+        SourceFolder: '$(Build.SourcesDirectory)/Stark.MessageBroker/bin/'
         Contents: '**'
         TargetFolder: '$(Build.ArtifactStagingDirectory)'
 
