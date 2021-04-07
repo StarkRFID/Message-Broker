@@ -110,7 +110,7 @@ stages:
       vmImage: $(vmImageName)
 
     dependsOn: 
-    - Deploy
+    - Build
 
     steps:
     - checkout: self
