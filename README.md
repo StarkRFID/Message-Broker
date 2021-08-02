@@ -13,7 +13,7 @@ Package can be download from: [Stark Message-Broker](https://www.nuget.org/packa
 Messages are posted and subscribed to by type, with the ability to execute custom actions for each message type.
 
 In the most basic example, a generic message with no data is posted to the broker and forwarded to subscribers, with
-each function passed in the subscription executed.
+each function passed in the subscription executed. 
 
 ```c#
 // Message class
