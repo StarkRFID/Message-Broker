@@ -59,7 +59,6 @@ stages:
       inputs:
         command: restore
         projects: '$(messageBrokerProject)'
-        arguments: '--configuration Release'
         feedsToUse: config
         nugetConfigPath: 'nuget.config'
         includeNuGetOrg: true
