@@ -54,6 +54,11 @@ stages:
 
     - task: NuGetToolInstaller@1
 
+    - task: NuGetAuthenticate@0
+      inputs:
+        nuGetServiceConnections: 'stark-github-packages'
+        forceReinstallCredentialProvider: true
+
     - task: DotNetCoreCLI@2
       displayName: dotnet restore
       inputs:
@@ -91,11 +96,11 @@ stages:
         Contents: '**'
         TargetFolder: '$(Build.ArtifactStagingDirectory)'
 
-    - task: PublishBuildArtifacts@1
+    - task: PublishPipelineArtifact@1
       inputs:
-        PathtoPublish: '$(Build.ArtifactStagingDirectory)'
-        ArtifactName: 'Stark.MessageBroker_Production_v$(starkVer).$(Build.BuildId)'
-        publishLocation: 'Container'
+        targetPath: '$(Build.ArtifactStagingDirectory)'
+        artifact: 'Stark.MessageBroker_Production_v$(starkVer).$(Build.BuildId)'
+        publishLocation: 'pipeline'
 
     - task: NuGetCommand@2
       inputs:
