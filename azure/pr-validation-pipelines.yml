@@ -36,6 +36,11 @@ steps:
 
 - task: NuGetToolInstaller@1
 
+- task: NuGetAuthenticate@0
+  inputs:
+    nuGetServiceConnections: 'stark-github-packages'
+    forceReinstallCredentialProvider: true
+
 - task: DotNetCoreCLI@2
   displayName: dotnet restore
   inputs:
