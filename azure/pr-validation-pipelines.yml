@@ -41,6 +41,13 @@ steps:
 #     nuGetServiceConnections: 'stark-github-packages'
 #     forceReinstallCredentialProvider: true
 
+- task: UseDotNet@2
+  displayName: "Install .NET 6.0 SDK"
+  inputs:
+    version: 6.x
+    performMultiLevelLookup: true
+    includePreviewVersions: false
+
 - task: DotNetCoreCLI@2
   displayName: dotnet restore
   inputs:
