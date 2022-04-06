@@ -14,7 +14,7 @@ resources:
 
 variables:
   # Current product version
-  starkVer: 2.0.2
+  starkVer: 2.0.3
 
   gitTag: 'MSGBKR-v$(starkVer).$(Build.BuildId)'
   messageBrokerProject: 'Stark.MessageBroker/Stark.MessageBroker.csproj'
@@ -58,6 +58,13 @@ stages:
       inputs:
         nuGetServiceConnections: 'stark-github-packages'
         forceReinstallCredentialProvider: true
+
+    - task: UseDotNet@2
+      displayName: "Install .NET 6.0 SDK"
+      inputs:
+        version: 6.x
+        performMultiLevelLookup: true
+        includePreviewVersions: false
 
     - task: DotNetCoreCLI@2
       displayName: dotnet restore
